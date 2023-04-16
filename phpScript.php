@@ -5,13 +5,43 @@
       } else {
         printf ("Error: %s\n", $mysqli->error); 
       }
-      
-     function pre($dump){
-        echo "<pre>";
-        var_dump($dump);
-        echo "</pre><hr>";
-      }
-      $mysqli->query("INSERT INTO `catigoris` (`ID`, `NAME`, `PARENT_ID`) VALUES ('1', 'каталог 1', NUll)");
+
+      $mysqli->query("INSERT INTO `catigoris` (`ID`, `NAME`, `PARENT_ID`) VALUES ('1', 'каталог 1', NUll)"); 
+
+      function Tree($tree){
+        echo '<ul>';
+       foreach ($tree as $node) {
+           echo '<li>' . $node['value']; 
+           if (isset($node['children'])) {
+               echo '<ul>';
+               foreach ($node['children'] as $child) {
+                $norep=$child['value'];
+                if($child['value']!=$norep){
+                   echo '<li>' . $child['value'] . '</li>';
+                }
+               }
+               echo '</ul>';
+               Tree($node['children']);
+           }
+           echo '</li>';
+       }
+       echo '</ul>';
+       }
+
+      function buildTree($data, $parent_id) {
+        $tree = array();
+        foreach ($data as $node) {
+            if ($node['parent_id'] == $parent_id) {
+                $children = buildTree($data, $node['id']);
+                if ($children) {
+                    $node['children'] = $children;
+                }
+                $tree[] = $node;
+            }
+        }
+        return $tree;
+    }
+
       function Ophod($mysqli,$ID){
         $arr=array();
         $id=0;
@@ -66,18 +96,16 @@
         }
       }
     for($i=1;$i<5000;$i++){
-        $randParentID = rand(1,4);
+        $randParentID = rand($i,5000);
         $arChilds = ophod($mysqli,$randParentID);
         $parentName= newFather($mysqli,$arChilds,$randParentID); 
         AddChild($mysqli,$parentName,$randParentID);
     }
-    $data = array();
-    $arCategories = $mysqli->query("select * from catigoris");
+    $data = array(); 
+      $arCategories = $mysqli->query("select * from catigoris");
         while ($row = mysqli_fetch_array($arCategories)) { 
             array_push($data,array('id' => $row['ID'], 'parent_id' => $row['PARENT_ID'], 'value' => $row['NAME']));
-        }
-    pre($data);
-   //<a href='/catalog/?id='.$data['id]>
-        
-
+        } 
+      $tree = buildTree($data,null);
+      Tree($tree);
      ?>
