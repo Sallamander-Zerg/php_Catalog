@@ -5,9 +5,9 @@
       } else {
         printf ("Error: %s\n", $mysqli->error); 
       }
-
+       print("я туест)");
       $mysqli->query("INSERT INTO `catigoris` (`ID`, `NAME`, `PARENT_ID`) VALUES ('1', 'каталог 1', NUll)"); 
-
+     
       function Tree($tree){
         echo '<ul>';
        foreach ($tree as $node) {
