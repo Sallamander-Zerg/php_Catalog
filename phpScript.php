@@ -9,23 +9,17 @@
      
       function Tree($tree){
         echo '<ul>';
-       foreach ($tree as $node) {
-           echo '<li>' . $node['value']; 
-           if (isset($node['children'])) {
-               echo '<ul>';
-               foreach ($node['children'] as $child) {
-                $norep=$child['value'];
-                if($child['value']!=$norep){
-                   echo '<li>' . $child['value'] . '</li>';
-                }
-               }
-               echo '</ul>';
-               Tree($node['children']);
-           }
-           echo '</li>';
-       }
-       echo '</ul>';
-       }
+        foreach ($tree as $node) {
+            echo '<li><a href="category.php?id=' . $node['id'] . '">' . $node['value'] ;
+            if (isset($node['children'])) {
+                echo '<ul>';
+                  Tree($node['children']);
+                echo '</ul>';
+            }
+            echo '</li>';
+        }
+        echo '</ul>';
+    }
 
       function buildTree($data, $parent_id) {
         $tree = array();
